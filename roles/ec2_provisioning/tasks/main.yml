@@ -5,11 +5,13 @@
     module: ec2_lookup
     region: "{{ region }}"
     tags: "{{ instance_tags }}"
-  register: ec2_pre_launch
 
+  register: ec2_pre_launch
+ 
 - name: calculate number of instances to provision
   set_fact: 
     count: "{{ num_instances - ec2_pre_launch.instances|length }}"
+
 
 - name: Launch EC2 Instance
   when: count > 0

@@ -14,13 +14,18 @@
     - git
 
 - name: Clone Django Repository
-  git: repo=https://github.com/cewing/djangoblog_uwpce.git dest={{ django_home }} force=yes
+  sudo: yes
+  git: repo=https://github.com/jaredscarr/django-imager.git dest={{ django_home }} force=yes version=michael-manual-deployment
+
+- name: Give www-data user, group access to repo
+  sudo: yes
+  file: path={{ django_home }} owner=www-data recurse=yes state=directory mode=0755
 
 - name: Install Python Dependencies
   sudo: yes
   pip:
     state: present
-    requirements: "{{ django_home }}/requirements.txt"
+    requirements: "{{ django_home }}/imagersite/requirements.txt"
 
 - name: Get DB Hostvars
   set_fact:
@@ -28,7 +33,6 @@
 
 - name: Get DB Password
   include_vars: secrets.yml
-
 
 - name: Set DB URL
   set_fact: 
@@ -38,14 +42,15 @@
   environment:
     DATABASE_URL: "{{ db_url }}"
   django_manage:
-    app_path: "{{ django_home }}"
-    settings: mysite.production
+    app_path: "{{ django_home }}/imagersite"
+    settings: imagersite.production
     command: migrate
 
 - name: Collect Static Files
+  sudo: yes
   environment:
     DATABASE_URL: "{{ db_url }}"
   django_manage:
-    app_path: "{{ django_home }}"
-    settings: mysite.production
+    app_path: "{{ django_home }}/imagersite"
+    settings: imagersite.production
     command: collectstatic

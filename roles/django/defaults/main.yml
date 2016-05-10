@@ -1,2 +1,2 @@
-django_home: /home/ubuntu/checkout
-rds_db_instance: uwpce
+django_home: /home/ubuntu/space
+rds_db_instance: django-ansible-imager
